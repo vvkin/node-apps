@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  setup-node-modules:
+    runs-on: ubuntu-latest
+    steps:
+    -
+      name: Set up checkout
+      uses: actions/checkout@v2
+    -
+      name: Cache node_modules
+      uses: actions/cache@v2
+      id: cache-node-modules
+      with:
+        path: node_modules
+        key: node_modules-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          node_modules-
+    -
+      name: Install dependencies
+      if: steps.node-modules-cache.outputs.cache-hit != 'true'
+      run: yarn --frozen-lockfile
+
+  ci:
+    needs: setup-node-modules
+    runs-on: ubuntu-latest
+    steps:
+    -
+      name: Set up checkout
+      uses: actions/checkout@v2
+    - 
+      name: Load node_modules
+      uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: node_modules-${{ hashFiles('yarn.lock') }}
+    -
+      name: Lint and check format
+      run: yarn lint && yarn fmt:check
+      
