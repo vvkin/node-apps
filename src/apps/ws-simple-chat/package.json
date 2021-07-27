@@ -4,5 +4,8 @@
   "description": "Simple chat applications with WebSockets",
   "main": "server.js",
   "author": "Vadym Kinchur <vkincur@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^7.5.3"
+  }
 }

@@ -3,6 +3,7 @@
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
+const WebSocket = require('ws');
 
 const PORT = 8080;
 const STATIC_DIR = './static';
@@ -22,6 +23,19 @@ const server = http.createServer((req, res) => {
       res.end(content);
     });
   } else httpError(405, res);
+});
+
+const ws = new WebSocket.Server({ server });
+
+ws.on('connection', (connection) => {
+  connection.on('message', (message) => {
+    const { clients } = ws;
+    for (const client of clients) {
+      if (client !== connection && client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    }
+  });
 });
 
 server.listen(PORT, () => {
