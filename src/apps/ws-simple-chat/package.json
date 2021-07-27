@@ -1,0 +1,8 @@
+{
+  "name": "ws-simple-chat",
+  "version": "1.0.0",
+  "description": "Simple chat applications with WebSockets",
+  "main": "server.js",
+  "author": "Vadym Kinchur <vkincur@gmail.com>",
+  "license": "MIT"
+}
