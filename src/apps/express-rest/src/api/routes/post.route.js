@@ -1,18 +1,13 @@
 'use strict';
 
 const { Router } = require('express');
-const {
-  getPost,
-  updatePost,
-  deletePost,
-  createPost,
-} = require('../controllers/post.controller');
+const postController = require('../controllers/post.controller');
 
 const route = Router();
 
-route.get('/:postId', getPost);
-route.patch('/:postId', updatePost);
-route.delete('/:postId', deletePost);
-route.post('/', createPost);
+route.post('/', postController.createPost);
+route.get('/:postId', postController.getPost);
+route.patch('/:postId', postController.updatePost);
+route.delete('/:postId', postController.deletePost);
 
 module.exports = route;
