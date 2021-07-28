@@ -2,17 +2,23 @@
 
 const db = require('../db');
 
-class PostDAO {
-  constructor() {
-    this.table = 'posts';
-  }
+const table = 'Posts';
 
-  async getOne(postId) {
-    const posts = await db.find('*', this.table, {
-      post_id: postId,
-    });
-    return posts[0];
-  }
-}
+const getOne = async (postId) => {
+  return db.selectOne({
+    fields: '*',
+    table,
+    where: { postId },
+  });
+};
 
-module.exports = { PostDAO };
+const create = async ({ authorId, title, content }) => {
+  const rows = await db.insert({
+    items: { authorId, title, content },
+    table,
+    returning: ['postId'],
+  });
+  return rows[0].postId;
+};
+
+module.exports = { getOne, create };

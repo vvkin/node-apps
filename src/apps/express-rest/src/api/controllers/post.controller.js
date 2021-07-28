@@ -1,9 +1,7 @@
 'use strict';
 
-const { NotFound, Conflict } = require('../../helpers/http-error');
-const { PostService } = require('../../services/post.service');
-
-const postService = new PostService();
+const { NotFound, Conflict } = require('../../helpers/http-errors');
+const postService = require('../../services/post.service');
 
 const getPost = async (req, res, next) => {
   const { postId } = req.params;

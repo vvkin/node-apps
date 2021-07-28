@@ -9,19 +9,51 @@ const _execute = async (query, params = []) => {
   return rows;
 };
 
-const _where = (where) => {
-  const conditions = Object.keys(where)
-    .map((key, idx) => `${key}=$${idx + 1}`)
-    .join(' AND ');
-  return 'WHERE ' + conditions;
+const _attrs = (keys) => {
+  return keys === '*' ? '*' : keys.map((key) => `"${key}"`).join(',');
 };
 
-const find = async (fields, table, where) => {
-  const attributes = fields !== '*' ? fields.join(',') : '*';
+const _where = (where) => {
+  const whereClause = where
+    ? ' WHERE ' +
+      Object.keys(where)
+        .map((key, idx) => `"${key}"=$${idx + 1}`)
+        .join(' AND ')
+    : '';
+  return whereClause;
+};
+
+const _placeholders = (length) => {
+  return Array.from({ length }, (_, i) => `$${i + 1}`);
+};
+
+const _returning = (keys) => {
+  return keys ? ' RETURNING ' + _attrs(keys) : '';
+};
+
+const select = async ({ fields, table, where }) => {
+  const attrs = _attrs(fields);
   const whereClause = _where(where);
-  const query = `SELECT ${attributes} FROM ${table} ${whereClause}`;
-  const params = where ? Object.values(where).flat() : [];
+  const query = `SELECT ${attrs} FROM "${table}"` + whereClause;
+  const params = whereClause ? Object.values(where) : [];
   return _execute(query, params);
 };
 
-module.exports = { find };
+const selectOne = async ({ fields, table, where }) => {
+  const rows = await select({ fields, table, where });
+  return rows[0];
+};
+
+const insert = async ({ items, table, returning }) => {
+  const keys = Object.keys(items);
+
+  const query =
+    `INSERT INTO "${table}"(${_attrs(keys)})` +
+    `VALUES(${_placeholders(keys.length)})` +
+    _returning(returning);
+
+  const params = Object.values(items);
+  return _execute(query, params);
+};
+
+module.exports = { select, selectOne, insert };

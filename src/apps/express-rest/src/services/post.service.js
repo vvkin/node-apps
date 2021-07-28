@@ -1,15 +1,13 @@
 'use strict';
 
-const { PostDAO } = require('../dao/post.dao');
+const postDAO = require('../dao/post.dao');
 
-class PostService {
-  constructor() {
-    this.dao = new PostDAO();
-  }
+const getPost = async (postId) => {
+  return postDAO.getOne(postId);
+};
 
-  async getPost(postId) {
-    return this.dao.getOne(postId);
-  }
-}
+const createPost = async (authorId, title, content) => {
+  return postDAO.create({ authorId, title, content });
+};
 
-module.exports = { PostService };
+module.exports = { getPost, createPost };
