@@ -20,5 +20,5 @@ CREATE TABLE posts (
 CREATE TABLE followers (
   follower_id int REFERENCES users ON DELETE CASCADE,
   followed_id int REFERENCES users ON DELETE CASCADE,
-  PRIMARY KEY(following_id, followed_id)
+  PRIMARY KEY(follower_id, followed_id)
 );
