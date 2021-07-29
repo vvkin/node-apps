@@ -1,22 +1,26 @@
 'use strict';
 
-const userDAO = require('../dao/user.dao');
-
-const getById = async (userId) => {
-  return userDAO.getOne(userId);
-};
-
-const getByUsername = async (username) => {
-  return userDAO.getOne(username);
-};
-
-const createUser = async (username, email, fullName) => {
-  try {
-    const userId = await userDAO.create(username, email, fullName);
-    return userId;
-  } catch (err) {
-    return null;
+class UserService {
+  constructor(userDAO) {
+    this.dao = userDAO;
   }
-};
 
-module.exports = { getById, getByUsername, createUser };
+  async getUserById(userId) {
+    return this.dao.getOne({ userId });
+  }
+
+  async getUserByUsername(username) {
+    return this.dao.getOne({ username });
+  }
+
+  async createUser(username, email, fullName) {
+    try {
+      const userId = await this.dao.create({ username, email, fullName });
+      return [null, userId];
+    } catch (err) {
+      return [err];
+    }
+  }
+}
+
+module.exports = { UserService };

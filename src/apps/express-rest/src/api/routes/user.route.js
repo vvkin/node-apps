@@ -1,11 +1,19 @@
 'use strict';
 
 const { Router } = require('express');
+const { UserModel } = require('../../models/user.model');
+const { UserService } = require('../../services/user.service');
 const userController = require('../controllers/user.controller');
 
-const router = Router();
+module.exports = (db) => {
+  const router = Router();
 
-router.post('/', userController.createUser);
-router.get('/:userId', userController.getUser);
+  const { createUser, getUserById } = userController(
+    new UserService(new UserModel(db))
+  );
 
-module.exports = router;
+  router.post('/', createUser);
+  router.get('/:userId', getUserById);
+
+  return router;
+};

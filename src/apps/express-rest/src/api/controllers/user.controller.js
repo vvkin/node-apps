@@ -1,26 +1,25 @@
 'use strict';
 
-const { NotFound, Conflict } = require('../../helpers/http-errors');
+module.exports = (userService) => {
+  const getUserById = async (req, res, next) => {
+    const { userId } = req.params;
+    const [err, user] = await userService.getUserById(userId);
+    if (!err) {
+      res.status(200).json({ user });
+    } else next(err);
+  };
 
-const userService = require('../../services/user.service');
+  const createUser = async (req, res, next) => {
+    const { username, email, fullName } = req.body;
+    const [err, userId] = await userService.createUser(
+      username,
+      email,
+      fullName
+    );
+    if (!err) {
+      res.status(201).json({ userId });
+    } else next(err);
+  };
 
-const getUser = async (req, res, next) => {
-  const { userId } = req.params;
-  const user = await userService.getUserById(userId);
-  if (user) {
-    res.status(200).json({ user });
-  } else next(new NotFound('User not found'));
-};
-
-const createUser = async (req, res, next) => {
-  const { username, email, fullName } = req.body;
-  const userId = await userService.createUser(username, email, fullName);
-  if (userId) {
-    res.status(201).json({ userId });
-  } else next(new Conflict('Username or email is already taken'));
-};
-
-module.exports = {
-  getUser,
-  createUser,
+  return { getUserById, createUser };
 };

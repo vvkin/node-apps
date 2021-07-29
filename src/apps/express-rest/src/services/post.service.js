@@ -1,13 +1,27 @@
 'use strict';
 
-const postDAO = require('../dao/post.dao');
+class PostService {
+  constructor(postDAO) {
+    this.dao = postDAO;
+  }
 
-const getPost = async (postId) => {
-  return postDAO.getOne(postId);
-};
+  async getPostById(postId) {
+    try {
+      const post = await this.dao.getOne({ postId });
+      return [null, post];
+    } catch (err) {
+      return [err];
+    }
+  }
 
-const createPost = async (authorId, title, content) => {
-  return postDAO.create({ authorId, title, content });
-};
+  async createPost(authorId, title, content) {
+    try {
+      const postId = await this.dao.create({ authorId, title, content });
+      return [null, postId];
+    } catch (err) {
+      return [err];
+    }
+  }
+}
 
-module.exports = { getPost, createPost };
+module.exports = { PostService };

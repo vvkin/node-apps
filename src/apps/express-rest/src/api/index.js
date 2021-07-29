@@ -2,13 +2,15 @@
 
 const { Router } = require('express');
 
+const { Database } = require('../db/index');
 const postRouter = require('./routes/post.route');
 const userRouter = require('./routes/user.route');
 
+const database = new Database();
 const router = Router();
 
-router.use('/posts', postRouter);
-router.use('/users', userRouter);
+router.use('/posts', postRouter(database));
+router.use('/users', userRouter(database));
 
 // eslint-disable-next-line no-unused-vars
 router.use((err, req, res, next) => {

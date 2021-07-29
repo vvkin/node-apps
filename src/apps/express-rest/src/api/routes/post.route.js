@@ -1,13 +1,21 @@
 'use strict';
 
 const { Router } = require('express');
+const { PostModel } = require('../../models/post.model');
+const { PostService } = require('../../services/post.service');
 const postController = require('../controllers/post.controller');
 
-const route = Router();
+module.exports = (db) => {
+  const route = Router();
 
-route.post('/', postController.createPost);
-route.get('/:postId', postController.getPost);
-route.patch('/:postId', postController.updatePost);
-route.delete('/:postId', postController.deletePost);
+  const { createPost, getPostById, updatePost, deletePost } = postController(
+    new PostService(new PostModel(db))
+  );
 
-module.exports = route;
+  route.post('/', createPost);
+  route.get('/:postId', getPostById);
+  route.patch('/:postId', updatePost);
+  route.delete('/:postId', deletePost);
+
+  return route;
+};
