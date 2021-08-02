@@ -3,13 +3,13 @@
 const { Router } = require('express');
 const { UserModel } = require('../../models/user.model');
 const { UserService } = require('../../services/user.service');
-const userController = require('../controllers/user.controller');
+const makeUserController = require('../controllers/user.controller');
 
-module.exports = (db) => {
+module.exports = (database) => {
   const router = Router();
 
-  const { createUser, getUserById } = userController(
-    new UserService(new UserModel(db))
+  const { createUser, getUserById } = makeUserController(
+    new UserService(new UserModel(database))
   );
 
   router.post('/', createUser);

@@ -3,14 +3,13 @@
 const { Router } = require('express');
 const { PostModel } = require('../../models/post.model');
 const { PostService } = require('../../services/post.service');
-const postController = require('../controllers/post.controller');
+const makePostController = require('../controllers/post.controller');
 
-module.exports = (db) => {
+module.exports = (database) => {
   const route = Router();
 
-  const { createPost, getPostById, updatePost, deletePost } = postController(
-    new PostService(new PostModel(db))
-  );
+  const { createPost, getPostById, updatePost, deletePost } =
+    makePostController(new PostService(new PostModel(database)));
 
   route.post('/', createPost);
   route.get('/:postId', getPostById);

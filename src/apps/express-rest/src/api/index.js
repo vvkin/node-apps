@@ -1,22 +1,20 @@
 'use strict';
 
 const { Router } = require('express');
-
 const { Database } = require('../db/index');
-const postRouter = require('./routes/post.route');
-const userRouter = require('./routes/user.route');
 
-const database = new Database();
+const { mapErrors } = require('./middlewares/map-errors');
+const { handleErrors } = require('./middlewares/handle-errors');
+
+const makePostRouter = require('./routes/post.route');
+const makeUserRouter = require('./routes/user.route');
+
 const router = Router();
+const database = new Database();
 
-router.use('/posts', postRouter(database));
-router.use('/users', userRouter(database));
-
-// eslint-disable-next-line no-unused-vars
-router.use((err, req, res, next) => {
-  const { code, message } = err;
-  const reply = { success: false, message };
-  res.status(code || 500).json(reply);
-});
+router.use('/posts', makePostRouter(database));
+router.use('/users', makeUserRouter(database));
+router.use(mapErrors);
+router.use(handleErrors);
 
 module.exports = router;

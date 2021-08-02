@@ -17,7 +17,7 @@ const buildAttrs = (attrs) => {
 };
 
 const buildReturning = (attrs) => {
-  return ' RETURNING ' + buildAttrs(attrs);
+  return attrs ? ' RETURNING ' + buildAttrs(attrs) : '';
 };
 
 class Database {
@@ -48,9 +48,10 @@ class Database {
     const data = new Array(keys.length);
     const nums = new Array(keys.length);
 
-    for (const [idx, key] of Object.entries(keys)) {
+    let idx = 0;
+    for (const key of keys) {
       data[idx] = items[key];
-      nums[idx] = `$${idx + 1}`;
+      nums[idx] = `$${++idx}`;
     }
 
     const attrs = '"' + keys.join('","') + '"';

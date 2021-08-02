@@ -1,24 +1,25 @@
 'use strict';
 
+const { STATUS_CODES } = require('http');
+
 class HttpError extends Error {
-  constructor(message, code) {
-    super(message);
-    this.code = code;
+  constructor(message, status) {
+    super(message || STATUS_CODES[status]);
+    this.status = status;
+    this.name = new.target.name;
   }
 }
 
-class NotFound extends HttpError {
+class HttpNotFound extends HttpError {
   constructor(message) {
-    super(message);
-    this.code = 404;
+    super(message, 404);
   }
 }
 
-class Conflict extends HttpError {
+class HttpConflict extends HttpError {
   constructor(message) {
-    super(message);
-    this.code = 409;
+    super(message, 409);
   }
 }
 
-module.exports = { NotFound, Conflict };
+module.exports = { HttpNotFound, HttpConflict };

@@ -1,26 +1,31 @@
 'use strict';
 
+const { EntityNotFound } = require('../helpers/entity-errors');
+
 class PostService {
-  constructor(postDAO) {
-    this.dao = postDAO;
+  constructor(postModel) {
+    this.postModel = postModel;
   }
 
-  async getPostById(postId) {
-    try {
-      const post = await this.dao.getOne({ postId });
-      return [null, post];
-    } catch (err) {
-      return [err];
-    }
+  async findById(postId) {
+    const post = await this.postModel.findOne({ postId });
+    if (post) {
+      return post;
+    } else throw new EntityNotFound('Post not found');
   }
 
-  async createPost(authorId, title, content) {
-    try {
-      const postId = await this.dao.create({ authorId, title, content });
-      return [null, postId];
-    } catch (err) {
-      return [err];
-    }
+  async create(authorId, title, content) {
+    const postId = await this.postModel.create({ authorId, title, content });
+    if (postId) {
+      return postId;
+    } else throw new EntityNotFound('Author not found');
+  }
+
+  async delete(postId) {
+    const deletedId = await this.postModel.delete({ postId });
+    if (deletedId) {
+      return deletedId;
+    } else throw new EntityNotFound('Post not found');
   }
 }
 

@@ -1,25 +1,32 @@
 'use strict';
 
+const { EntityNotFound, EntityConflict } = require('../helpers/entity-errors');
+
 class UserService {
-  constructor(userDAO) {
-    this.dao = userDAO;
+  constructor(userModel) {
+    this.userModel = userModel;
   }
 
-  async getUserById(userId) {
-    return this.dao.getOne({ userId });
+  async findOne(conditions) {
+    const user = await this.userModel.findOne(conditions);
+    if (user) {
+      return user;
+    } else throw new EntityNotFound('User not found');
   }
 
-  async getUserByUsername(username) {
-    return this.dao.getOne({ username });
+  async create(username, email, fullName) {
+    if (await this.findOne({ username }))
+      throw new EntityConflict('Username is already taken');
+    if (await this.findOne({ email }))
+      throw new EntityConflict('Email is already taken');
+    return this.userModel.create(username, email, fullName);
   }
 
-  async createUser(username, email, fullName) {
-    try {
-      const userId = await this.dao.create({ username, email, fullName });
-      return [null, userId];
-    } catch (err) {
-      return [err];
-    }
+  async delete(conditions) {
+    const userId = this.userModel.delete(conditions);
+    if (userId) {
+      return userId;
+    } else throw new EntityNotFound('user not found');
   }
 }
 
