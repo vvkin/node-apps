@@ -7,7 +7,7 @@ class PostService {
     this.postModel = postModel;
   }
 
-  async findById(postId) {
+  async findOne({ postId }) {
     const post = await this.postModel.findOne({ postId });
     if (post) {
       return post;

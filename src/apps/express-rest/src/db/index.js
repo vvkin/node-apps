@@ -2,6 +2,10 @@
 
 const { Pool } = require('pg');
 
+const FOREIGN_KEY_VIOLATION = '23503';
+const UNIQUE_VIOLATION = '23505';
+const ALLOWED_ERRORS = [FOREIGN_KEY_VIOLATION, UNIQUE_VIOLATION];
+
 const buildWhere = (conditions) => {
   const clause = conditions
     ? ' WHERE ' +
@@ -26,8 +30,14 @@ class Database {
   }
 
   async query(sql, data) {
-    const { rows } = await this.pool.query(sql, data);
-    return rows;
+    try {
+      const { rows } = await this.pool.query(sql, data);
+      return rows;
+    } catch (err) {
+      if (!ALLOWED_ERRORS.includes(err.code)) {
+        throw err;
+      } else return null;
+    }
   }
 
   async find({ fields = ['*'], table, where }) {

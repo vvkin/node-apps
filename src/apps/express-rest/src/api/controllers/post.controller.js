@@ -4,7 +4,7 @@ module.exports = (postService) => {
   const getPostById = async (req, res, next) => {
     const { postId } = req.params;
     try {
-      const post = await postService.findById(postId);
+      const post = await postService.findOne({ postId });
       res.status(200).json({ post });
     } catch (err) {
       next(err);
@@ -32,7 +32,7 @@ module.exports = (postService) => {
     }
   };
 
-  const deletePost = async (req, res, next) => {
+  const deletePostById = async (req, res, next) => {
     const { postId } = req.params;
     try {
       const deletedId = await postService.delete(postId);
@@ -42,5 +42,5 @@ module.exports = (postService) => {
     }
   };
 
-  return { getPostById, createPost, updatePost, deletePost };
+  return { getPostById, createPost, updatePost, deletePostById };
 };

@@ -29,7 +29,7 @@ class BaseModel {
       table: this.table,
       returning: [this.pk],
     });
-    return rows[0]?.[this.pk];
+    return rows?.[0]?.[this.pk];
   }
 
   async delete(conditions) {
@@ -38,7 +38,7 @@ class BaseModel {
       where: conditions,
       returning: [this.pk],
     });
-    return rows[0]?.[this.pk];
+    return rows?.[0]?.[this.pk];
   }
 }
 
