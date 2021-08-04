@@ -11,7 +11,7 @@ const PORT = 8080;
 const STATIC_PATH = path.join(process.cwd(), './static');
 const MIME_TYPES = {
   html: 'text/html; charset=UTF-8',
-  js: 'text/javascript',
+  js: 'text/javascript; charset=UTF-8',
   css: 'text/css',
   jpg: 'image/jpeg',
   png: 'image/png',
@@ -27,14 +27,16 @@ const indexDirectory = (filePath) => {
   const stream = new Readable({
     read() {
       fs.readdir(filePath, { withFileTypes: true }, (err, items) => {
-        const upDir =
-          path.relative(STATIC_PATH, path.resolve(filePath, '..')) || '/';
+        if (err) return;
+        const relative = '/' + path.relative(STATIC_PATH, filePath);
+        const parent = path.join(relative, '..');
         const list = items.map((item) => {
-          const itemPath = item.name + (item.isDirectory() ? '/' : '');
-          return formatItem(itemPath, itemPath);
+          const itemName = item.name + (item.isDirectory() ? '/' : '');
+          const itemHref = path.join(relative, itemName);
+          return formatItem(itemHref, itemName);
         });
-        this.push('<h2>Directory index:</h2>');
-        this.push(`<ul>${formatItem(upDir, '../') + list.join('\n')}<ul>`);
+        this.push(`<h2>Directory ${relative} index:</h2>`);
+        this.push(`<ul>${formatItem(parent, '../') + list.join('\n')}<ul>`);
         this.push(null);
       });
     },
