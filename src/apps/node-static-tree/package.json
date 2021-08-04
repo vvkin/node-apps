@@ -1,0 +1,7 @@
+{
+  "name": "node-static-tree",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "Vadym Kinchur <vkincur@gmail.com>",
+  "license": "MIT"
+}
