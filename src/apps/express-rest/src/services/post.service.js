@@ -1,6 +1,7 @@
 'use strict';
 
-const { EntityNotFound } = require('../helpers/entity-errors');
+const { EntityNotFound, EntityConflict } = require('../helpers/entity-errors');
+const { filterDTO } = require('../helpers/create-dto');
 
 class PostService {
   constructor(postModel) {
@@ -26,6 +27,16 @@ class PostService {
     if (deletedId) {
       return deletedId;
     } else throw new EntityNotFound('Post not found');
+  }
+
+  async update(postId, title, content) {
+    const post = await this.postModel.update({
+      dto: filterDTO({ title, content }),
+      conditions: { postId },
+    });
+    if (post) {
+      return post;
+    } else throw new EntityConflict('Unable to update post');
   }
 }
 

@@ -40,6 +40,16 @@ class BaseModel {
     });
     return rows?.[0]?.[this.pk];
   }
+
+  async update({ conditions, dto }) {
+    const rows = await this.db.update({
+      table: this.table,
+      items: { ...dto, updatedAt: new Date() },
+      where: conditions,
+      returning: ['*'],
+    });
+    return rows?.[0];
+  }
 }
 
 module.exports = { BaseModel };

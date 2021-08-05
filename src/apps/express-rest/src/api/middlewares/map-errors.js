@@ -7,8 +7,8 @@ const mapping = {
   EntityConflict: HttpConflict,
 };
 
-// eslint-disable-next-line no-unused-vars
 const mapErrors = (err, req, res, next) => {
+  console.log(err);
   const { message, name } = err;
   const Mapper = mapping[name];
   if (Mapper) {

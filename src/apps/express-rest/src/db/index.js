@@ -6,11 +6,11 @@ const FOREIGN_KEY_VIOLATION = '23503';
 const UNIQUE_VIOLATION = '23505';
 const ALLOWED_ERRORS = [FOREIGN_KEY_VIOLATION, UNIQUE_VIOLATION];
 
-const buildWhere = (conditions) => {
+const buildWhere = (conditions, index = 0) => {
   const clause = conditions
     ? ' WHERE ' +
       Object.keys(conditions)
-        .map((key, idx) => `"${key}"=$${idx + 1}`)
+        .map((key) => `"${key}"=$${++index}`)
         .join(' AND ')
     : '';
   return clause;
@@ -70,6 +70,19 @@ class Database {
       `INSERT INTO "${table}"(${attrs}) VALUES(${params})` +
       buildReturning(returning);
 
+    return this.query(sql, data);
+  }
+
+  async update({ items, table, where, returning }) {
+    let index = 0;
+    const sql =
+      `UPDATE "${table}" SET ` +
+      Object.keys(items)
+        .map((key) => `"${key}"=$${++index}`)
+        .join(',') +
+      buildWhere(where, index) +
+      buildReturning(returning);
+    const data = Object.values(items).concat(where ? Object.values(where) : []);
     return this.query(sql, data);
   }
 

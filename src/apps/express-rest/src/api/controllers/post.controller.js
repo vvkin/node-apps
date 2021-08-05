@@ -21,7 +21,7 @@ module.exports = (postService) => {
     }
   };
 
-  const updatePost = async (req, res, next) => {
+  const updatePostById = async (req, res, next) => {
     const { postId } = req.params;
     const { title, content } = req.body;
     try {
@@ -42,5 +42,10 @@ module.exports = (postService) => {
     }
   };
 
-  return { getPostById, createPost, updatePost, deletePostById };
+  return {
+    getPostById,
+    createPost,
+    updatePostById,
+    deletePostById,
+  };
 };

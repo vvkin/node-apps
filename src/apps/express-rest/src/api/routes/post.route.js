@@ -8,12 +8,12 @@ const makePostController = require('../controllers/post.controller');
 module.exports = (database) => {
   const route = Router();
 
-  const { createPost, getPostById, updatePost, deletePostById } =
+  const { createPost, getPostById, updatePostById, deletePostById } =
     makePostController(new PostService(new PostModel(database)));
 
   route.post('/', createPost);
   route.get('/:postId', getPostById);
-  route.patch('/:postId', updatePost);
+  route.patch('/:postId', updatePostById);
   route.delete('/:postId', deletePostById);
 
   return route;
