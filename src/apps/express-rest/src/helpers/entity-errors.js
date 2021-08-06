@@ -19,4 +19,4 @@ class EntityConflict extends EntityError {
   }
 }
 
-module.exports = { EntityNotFound, EntityConflict };
+module.exports = { EntityError, EntityNotFound, EntityConflict };

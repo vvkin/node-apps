@@ -12,9 +12,8 @@ module.exports = (postService) => {
   };
 
   const createPost = async (req, res, next) => {
-    const { authorId, title, content } = req.body;
     try {
-      const postId = await postService.create(authorId, title, content);
+      const postId = await postService.create(req.body);
       res.status(201).json({ postId });
     } catch (err) {
       next(err);
@@ -23,9 +22,8 @@ module.exports = (postService) => {
 
   const updatePostById = async (req, res, next) => {
     const { postId } = req.params;
-    const { title, content } = req.body;
     try {
-      const post = await postService.update(postId, title, content);
+      const post = await postService.update(postId, req.body);
       res.status(200).json({ post });
     } catch (err) {
       next(err);

@@ -3,8 +3,16 @@
 const { EntityNotFound, EntityConflict } = require('../helpers/entity-errors');
 
 class UserService {
-  constructor(userModel) {
+  constructor(userModel, postModel) {
     this.userModel = userModel;
+    this.postModel = postModel;
+  }
+
+  async checkUniques({ username, email }) {
+    const reason =
+      ((await this.userModel.findOne({ username })) && 'Username') ||
+      ((await this.userModel.findOne({ email })) && 'Email');
+    return reason ? new EntityConflict(`${reason} is already taken`) : null;
   }
 
   async findOne(conditions) {
@@ -21,12 +29,19 @@ class UserService {
     } else throw new EntityNotFound('User not found');
   }
 
-  async create(username, email, fullName) {
-    if (await this.userModel.findOne({ username }))
-      throw new EntityConflict('Username is already taken');
-    if (await this.userModel.findOne({ email }))
-      throw new EntityConflict('Email is already taken');
-    return this.userModel.create({ username, email, fullName });
+  async create(dto) {
+    const error = await this.checkUniques(dto);
+    if (error) throw error;
+    return this.userModel.create(dto);
+  }
+
+  async update(userId, dto) {
+    const error = await this.checkUniques(dto);
+    if (error) throw error;
+    const user = await this.userModel.update({ dto, conditions: { userId } });
+    if (user) {
+      return user;
+    } else throw new EntityNotFound('User not found');
   }
 
   async follow(followerId, followedId) {
@@ -51,6 +66,11 @@ class UserService {
   async getFollowers(userId) {
     await this.findOne({ userId });
     return this.userModel.getFollowers({ userId });
+  }
+
+  async getPosts(userId) {
+    await this.findOne({ userId });
+    return this.postModel.findAll({ authorId: userId });
   }
 }
 

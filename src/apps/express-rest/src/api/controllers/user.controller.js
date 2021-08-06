@@ -24,18 +24,17 @@ module.exports = (userService) => {
   const createUser = async (req, res, next) => {
     const { username, email, fullName } = req.body;
     try {
-      const userId = await userService.create(username, email, fullName);
+      const userId = await userService.create({ username, email, fullName });
       res.status(201).json({ userId });
     } catch (err) {
       next(err);
     }
   };
 
-  const updateUser = async (req, res, next) => {
+  const updateUserById = async (req, res, next) => {
     const { userId } = req.params;
-    const { fullName } = req.body;
     try {
-      const user = await userService.update(userId, fullName);
+      const user = await userService.update(userId, req.body);
       res.status(201).json({ user });
     } catch (err) {
       next(err);
@@ -72,6 +71,16 @@ module.exports = (userService) => {
     }
   };
 
+  const getUserPosts = async (req, res, next) => {
+    const { userId } = req.params;
+    try {
+      const posts = await userService.getPosts(userId);
+      res.status(200).json({ posts });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   const followUser = async (req, res, next) => {
     const { followerId, followedId } = req.params;
     try {
@@ -97,9 +106,10 @@ module.exports = (userService) => {
     getUserByUsername,
     getUserFollowers,
     getUserFollows,
-    createUser,
-    updateUser,
+    getUserPosts,
+    updateUserById,
     deleteUserById,
+    createUser,
     followUser,
     unfollowUser,
   };

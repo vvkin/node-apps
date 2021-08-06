@@ -9,7 +9,7 @@ class BaseModel {
 
   async findAll(conditions) {
     return this.db.find({
-      field: ['*'],
+      fields: ['*'],
       table: this.table,
       where: conditions,
     });

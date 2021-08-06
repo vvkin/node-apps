@@ -1,11 +1,10 @@
 'use strict';
 
 const { Router } = require('express');
-const { UserModel } = require('../../models/user.model');
 const { UserService } = require('../../services/user.service');
 const makeUserController = require('../controllers/user.controller');
 
-module.exports = (database) => {
+module.exports = (userModel, postModel) => {
   const router = Router();
 
   const {
@@ -14,22 +13,25 @@ module.exports = (database) => {
     getUserByUsername,
     getUserFollowers,
     getUserFollows,
+    getUserPosts,
     deleteUserById,
-    updateUser,
+    updateUserById,
     followUser,
     unfollowUser,
-  } = makeUserController(new UserService(new UserModel(database)));
+  } = makeUserController(new UserService(userModel, postModel));
 
   router.get('/', getUserByUsername);
   router.get('/:userId', getUserById);
   router.post('/', createUser);
-  router.patch('/:userId', updateUser);
+  router.patch('/:userId', updateUserById);
   router.delete('/:userId', deleteUserById);
 
   router.get('/:userId/followers', getUserFollowers);
   router.get('/:userId/follows', getUserFollows);
   router.post('/:followerId/follows/:followedId', followUser);
   router.delete('/:followerId/follows/:followedId', unfollowUser);
+
+  router.get('/:userId/posts', getUserPosts);
 
   return router;
 };
